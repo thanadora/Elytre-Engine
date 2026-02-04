@@ -1,0 +1,23 @@
+# Ignorer les fichiers compilés
+/target/
+
+# Ignorer les fichiers spécifiques aux éditeurs/IDEs
+.vscode/
+.idea/
+*.iml
+
+# Ignorer les fichiers de logs et temporaires
+**/*.log
+**/*.tmp
+**/*.bak
+*~
+
+# Ignorer les fichiers système spécifiques à macOS et Windows
+.DS_Store
+Thumbs.db
+
+# Ignorer les fichiers générés par Rust
+*.rlib
+*.dylib
+*.so
+*.a
