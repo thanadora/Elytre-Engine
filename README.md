@@ -141,36 +141,6 @@ Agrège la fenêtre et le contexte graphique. La boucle principale écoute les �
 }
 ```
 
----
-
-## Ce qu'il reste à faire
-
-### 🔴 Corrections urgentes (le projet ne compile pas en l'état)
-
-- **Ajouter `wgpu` dans `Cargo.toml`** — le module graphique l'utilise mais il n'est pas déclaré comme dépendance.
-- **Mettre à jour le code graphique vers l'API winit 0.30** — `winit 0.30` a cassé la compatibilité : `EventLoop::new()` retourne maintenant un `Result`, `Window::new()` disparaît au profit de `event_loop.create_window()`, et `ControlFlow::Exit` devient `EventLoopWindowTarget::exit()`. Voir le [guide de migration winit 0.30](https://github.com/rust-windowing/winit/blob/master/CHANGELOG.md).
-- **Corriger les imports cassés dans la physique** — `spatial_grid.rs`, `Collision.rs`, `movement_system`, `gravity_system` référencent `crate::components::`, `crate::math::vec2::`, `crate::get_components_mut!` qui n'existent pas dans la structure actuelle.
-- **Unifier les noms de champs** — `Velocity2D` expose un champ `vel` mais `gravity_system` et `movement_system` accèdent à `velocity.velocity.x`. Choisir une convention et s'y tenir.
-- **Renommer les fichiers en snake_case** — `Collider2D.rs` → `collider_2d.rs`, `Collision.rs` → `collision.rs`, `Transform2D.rs` → `transform_2d.rs`, `Vec2.rs` → `vec2.rs`. Rust l'exige.
-
-### 🟡 Fonctionnalités à compléter
-
-- **Brancher l'ECS sur la physique** — les systèmes physiques doivent utiliser `world.iter_components::<Transform2D>()` (pas `world.query::<>()` qui n'existe pas).
-- **Brancher la physique sur la boucle principale** — `GameEngine::run()` doit appeler `movement_system`, `gravity_system`, `spatial_hash_system` et `collision_system` à chaque frame.
-- **Implémenter le rendu** — pour l'instant `RedrawRequested` est vide. Il faut créer un pipeline wgpu (shaders WGSL, vertex buffer, draw calls) pour afficher quelque chose à l'écran.
-- **Brancher `deserialize.rs`** — créer une fonction qui lit un fichier JSON et spawn les entités avec leurs composants dans le `World`.
-- **Décommenter et finir `Health.rs`** — définir le trait `Script` et l'API `GameObject` si cette direction est maintenue.
-
-### 🟢 Améliorations futures
-
-- **Réponse aux collisions** — pour l'instant `collision_system` détecte les collisions et `println!` le résultat. Il faut calculer le vecteur de séparation (MTV) et déplacer les entités.
-- **Delta time réel** — `delta_time` est hardcodé à `0.016`. Il faut le mesurer avec `std::time::Instant` dans la boucle.
-- **Système de rendu de sprites** — charger des images PNG et les afficher à la position du `Transform2D`.
-- **Tests d'intégration** — le fichier `tests/Health.rs` montre l'intention. Écrire des tests qui font tourner plusieurs frames et vérifient le comportement physique.
-- **Profiling** — une fois le moteur fonctionnel, mesurer les hotspots (probablement le spatial hash et les allocations dans les systèmes).
-
----
-
 ## Structure du projet
 
 ```
